@@ -9,116 +9,140 @@ decodable_file = '*.3dostr;*.4xm;*.aa;*.aac;*.aax;*.ac3;*.ac4;*.ace;*.acm;*.act;
 class VideoConverterApp:
 	def __init__(self, root):
 		self.root = root
-		self.root.title("音视频转换器")
+		self.root.title('音视频转换器')
 		self.root.resizable(False, False)
 		
 		self.width = 50
 		
-		self.input_file = ""
-		self.output_file = ""
+		self.input_file = ''
+		self.output_file = ''
 		
 		self.create_widgets()
 	
 	def create_widgets(self):
 		# 输入文件选择
-		self.input_label = tk.Label(self.root, text="输入音视频文件:")
+		self.input_label = tk.Label(self.root, text='输入音视频文件:')
 		self.input_label.pack(pady=5, anchor=tk.W)
-		
 		self.input_entry = tk.Entry(self.root, width=self.width)
 		self.input_entry.pack(pady=5, anchor=tk.W)
-		
-		self.browse_button = tk.Button(self.root, text="浏览", command=self.browse_input)
+		self.browse_button = tk.Button(self.root, text='浏览', command=self.browse_input)
 		self.browse_button.pack(pady=5)
 		
 		# 输出文件选择
-		self.output_label = tk.Label(self.root, text="输出音视频文件:")
+		self.output_label = tk.Label(self.root, text='输出音视频文件:')
 		self.output_label.pack(pady=5, anchor=tk.W)
-		
 		self.output_entry = tk.Entry(self.root, width=self.width)
 		self.output_entry.pack(pady=5, anchor=tk.W)
-		
-		self.output_button = tk.Button(self.root, text="浏览", command=self.browse_output)
+		self.output_button = tk.Button(self.root, text='浏览', command=self.browse_output)
 		self.output_button.pack(pady=5)
 		
 		# 清晰度选项
 		self.resolution_var = tk.BooleanVar()
-		self.resolution_check = tk.Checkbutton(self.root, text="清晰度：", variable=self.resolution_var,
+		self.resolution_check = tk.Checkbutton(self.root, text='清晰度：', variable=self.resolution_var,
 		                                       command=self.toggle_resolution)
 		self.resolution_check.pack(pady=5, anchor=tk.W)
-		
-		self.resolution_options = {"360P": "640:-1", "480P": "852:-1", "720P": "1280:-1", "1080P": "1920:-1",
-		                           "2K": "2560:-1", "4K": "3840:-1"}
-		self.resolution_value = tk.StringVar(value="360P")
+		self.resolution_options = {'360P': '640:-1', '480P': '852:-1', '720P': '1280:-1', '1080P': '1920:-1',
+		                           '2K': '2560:-1', '4K': '3840:-1'}
+		self.resolution_value = tk.StringVar(value='1080P')
 		self.resolution_entry = tk.OptionMenu(root, self.resolution_value, *self.resolution_options.keys())
 		self.resolution_entry.pack(pady=5)
 		self.resolution_entry.config(state='disabled')
 		
 		# 起始时间
 		self.start_var = tk.BooleanVar()
-		self.start_check = tk.Checkbutton(self.root, text="起始时间（HH:MM:SS格式或秒数）：", variable=self.start_var,
+		self.start_check = tk.Checkbutton(self.root, text='起始时间（HH:MM:SS格式或秒数）：', variable=self.start_var,
 		                                  command=self.toggle_start)
 		self.start_check.pack(pady=5, anchor=tk.W)
-		
 		self.start_entry = tk.Entry(self.root, width=self.width)
 		self.start_entry.pack(pady=5, anchor=tk.W)
 		self.start_entry.config(state='disabled')
 		
 		# 结束时间
 		self.end_var = tk.BooleanVar()
-		self.end_check = tk.Checkbutton(self.root, text="结束时间（HH:MM:SS格式或秒数）：", variable=self.end_var,
+		self.end_check = tk.Checkbutton(self.root, text='结束时间（HH:MM:SS格式或秒数）：', variable=self.end_var,
 		                                command=self.toggle_end)
 		self.end_check.pack(pady=5, anchor=tk.W)
-		
 		self.end_entry = tk.Entry(self.root, width=self.width)
 		self.end_entry.pack(pady=5, anchor=tk.W)
 		self.end_entry.config(state='disabled')
 		
-		# 清晰度选项
+		# 编码器选项
 		self.codec_var = tk.BooleanVar()
-		self.codec_check = tk.Checkbutton(self.root, text="编码器：", variable=self.codec_var,
+		self.codec_check = tk.Checkbutton(self.root, text='编码器：', variable=self.codec_var,
 		                                  command=self.toggle_codec)
 		self.codec_check.pack(pady=5, anchor=tk.W)
-		
 		self.codec_options = {
-			"（视频）H.264": "libx264",
-			"（视频）H.265": "libx265",
-			"（视频）MPEG-2": "mpeg2video",
-			"（视频）MPEG-4": "mpeg4",
-			"（视频）VP8": "libvpx",
-			"（视频）VP9": "libvpx-vp9",
-			"（视频）AV1": "libaom-av1",
-			"（视频）ProRes": "prores",
-			"（视频）DNxHD": "dnxhd",
+			'（视频）H.264': 'libx264',
+			'（视频）H.265': 'libx265',
+			'（视频）MPEG-2': 'mpeg2video',
+			'（视频）MPEG-4': 'mpeg4',
+			'（视频）VP8': 'libvpx',
+			'（视频）VP9': 'libvpx-vp9',
+			'（视频）AV1': 'libaom-av1',
+			'（视频）ProRes': 'prores',
+			'（视频）DNxHD': 'dnxhd',
 			
-			"（音频）AAC": "aac",
-			"（音频）MP3": "mp3",
-			"（音频）WAV S16le": "pcm_s16le",
-			"（音频）WAV S24le": "pcm_s24le",
-			"（音频）FLAC": "flac",
-			"（音频）OGG Vorbis": "libvorbis",
-			"（音频）AC3": "ac3",
-			"（音频）Opus": "libopus",
-			"（音频）ALAC": "alac"
+			# '（音频）AAC': 'aac',
+			# '（音频）MP3': 'mp3',
+			# '（音频）WAV S16le': 'pcm_s16le',
+			# '（音频）WAV S24le': 'pcm_s24le',
+			# '（音频）FLAC': 'flac',
+			# '（音频）OGG Vorbis': 'libvorbis',
+			# '（音频）AC3': 'ac3',
+			# '（音频）Opus': 'libopus',
+			# '（音频）ALAC': 'alac'
 		}
-		self.codec_value = tk.StringVar(value="（视频）H.264")
+		self.codec_value = tk.StringVar(value='（视频）H.264')
 		self.codec_entry = tk.OptionMenu(root, self.codec_value, *self.codec_options.keys())
 		self.codec_entry.pack(pady=5)
 		self.codec_entry.config(state='disabled')
 		
+		# 帧率选项
+		self.fps_var = tk.BooleanVar()
+		self.fps_check = tk.Checkbutton(self.root, text='帧率（fps）:', variable=self.fps_var,
+		                                command=self.toggle_fps)
+		self.fps_check.pack(pady=5, anchor=tk.W)
+		self.fps_entry = tk.Entry(self.root, width=self.width)
+		self.fps_entry.insert(0, '25')
+		self.fps_entry.pack(pady=5, anchor=tk.W)
+		self.fps_entry.config(state='disabled')
+		
+		# 视频码率选项
+		self.video_code_rate_var = tk.BooleanVar()
+		self.video_code_rate_check = tk.Checkbutton(self.root, text='视频码率（Kbps）:',
+		                                            variable=self.video_code_rate_var,
+		                                            command=self.toggle_video_code_rate)
+		self.video_code_rate_check.pack(pady=5, anchor=tk.W)
+		self.video_code_rate_entry = tk.Entry(self.root, width=self.width)
+		self.video_code_rate_entry.pack(pady=5, anchor=tk.W)
+		self.video_code_rate_entry.insert(0, '2000')
+		self.video_code_rate_entry.config(state='disabled')
+		
+		# 音频码率选项
+		self.audio_code_rate_var = tk.BooleanVar()
+		self.audio_code_rate_check = tk.Checkbutton(self.root, text='音频码率（Kbps）:',
+		                                            variable=self.audio_code_rate_var,
+		                                            command=self.toggle_audio_code_rate)
+		self.audio_code_rate_check.pack(pady=5, anchor=tk.W)
+		self.audio_code_rate_entry = tk.Entry(self.root, width=self.width)
+		self.audio_code_rate_entry.pack(pady=5, anchor=tk.W)
+		self.audio_code_rate_entry.insert(0, '128')
+		self.audio_code_rate_entry.config(state='disabled')
+		
 		# 转换按钮
-		self.convert_button = tk.Button(self.root, text="转换", command=self.convert_video)
+		self.convert_button = tk.Button(self.root, text='转换', command=self.convert_video)
 		self.convert_button.pack(pady=20)
 	
 	def browse_input(self):
 		self.input_file = filedialog.askopenfilename(
-			filetypes=[("可解码音视频文件", decodable_file), ("所有文件", "*.*")])
+			filetypes=[('可解码音视频文件', decodable_file), ('所有文件', '*.*')])
 		self.input_entry.delete(0, tk.END)
 		self.input_entry.insert(0, self.input_file)
 	
 	def browse_output(self):
-		self.output_file = filedialog.asksaveasfilename(defaultextension=".mp4",
-		                                                filetypes=[("可解码音视频文件", encodable_file),
-		                                                           ("所有文件", "*.*")])
+		self.output_file = filedialog.asksaveasfilename(defaultextension='.mp4',
+		                                                filetypes=[('可解码音视频文件', encodable_file),
+		                                                           ('所有文件', '*.*')])
 		self.output_entry.delete(0, tk.END)
 		self.output_entry.insert(0, self.output_file)
 	
@@ -146,39 +170,69 @@ class VideoConverterApp:
 		else:
 			self.codec_entry.config(state='disabled')
 	
+	def toggle_fps(self):
+		if self.fps_var.get():
+			self.fps_entry.config(state='normal')
+		else:
+			self.fps_entry.config(state='disabled')
+	
+	def toggle_video_code_rate(self):
+		if self.video_code_rate_var.get():
+			self.video_code_rate_entry.config(state='normal')
+		else:
+			self.video_code_rate_entry.config(state='disabled')
+	
+	def toggle_audio_code_rate(self):
+		if self.audio_code_rate_var.get():
+			self.audio_code_rate_entry.config(state='normal')
+		else:
+			self.audio_code_rate_entry.config(state='disabled')
+	
 	def convert_video(self):
 		if not self.input_file or not self.output_file:
-			messagebox.showerror("错误", "请指定输入和输出文件！")
+			messagebox.showerror('错误', '请指定输入和输出文件！')
 			return
 		
-		command = ["ffmpeg", "-y", "-i", self.input_file]
+		command = ['ffmpeg', '-y', '-i', self.input_file]
 		
 		if self.start_var.get():
 			start_time = self.start_entry.get()
-			command += ["-ss", start_time]
+			command += ['-ss', start_time]
 		
 		if self.end_var.get():
 			end_time = self.end_entry.get()
-			command += ["-to", end_time]
+			command += ['-to', end_time]
 		
 		if self.resolution_var.get():
 			resolution = self.resolution_value.get()
-			command += ["-vf", f"scale={self.resolution_options[resolution]}"]
+			command += ['-vf', f'scale={self.resolution_options[resolution]}']
 		
 		if self.codec_var.get():
 			codec = self.codec_value.get()
-			command += ["-c:v", self.codec_options[codec]]
+			command += ['-c:v', self.codec_options[codec]]
+		
+		if self.fps_var.get():
+			fps = self.fps_entry.get()
+			command += ['-r', fps]
+		
+		if self.video_code_rate_var.get():
+			vcr = self.video_code_rate_entry.get() + 'k'
+			command += ['-b:v', vcr]
+		
+		if self.audio_code_rate_var.get():
+			acr = self.audio_code_rate_entry.get() + 'k'
+			command += ['-b:a', acr]
 		
 		command.append(self.output_file)
 		
 		try:
 			subprocess.run(command, check=True)
-			messagebox.showinfo("成功", "音视频转换成功！")
+			messagebox.showinfo('成功', '音视频转换成功！')
 		except subprocess.CalledProcessError as e:
-			messagebox.showerror("错误", f"转换失败：{e}")
+			messagebox.showerror('错误', f'转换失败：{e}')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	root = tk.Tk()
 	app = VideoConverterApp(root)
 	root.mainloop()
