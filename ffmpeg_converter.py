@@ -81,7 +81,7 @@ class VideoConverterApp:
 			'（视频）AV1': 'libaom-av1',
 			'（视频）ProRes': 'prores',
 			'（视频）DNxHD': 'dnxhd',
-			
+
 			# '（音频）AAC': 'aac',
 			# '（音频）MP3': 'mp3',
 			# '（音频）WAV S16le': 'pcm_s16le',
@@ -134,15 +134,19 @@ class VideoConverterApp:
 		self.convert_button.pack(pady=20)
 	
 	def browse_input(self):
-		self.input_file = filedialog.askopenfilename(
+		i = filedialog.askopenfilename(
 			filetypes=[('可解码音视频文件', decodable_file), ('所有文件', '*.*')])
+		if i != '':
+			self.input_file = i
 		self.input_entry.delete(0, tk.END)
 		self.input_entry.insert(0, self.input_file)
 	
 	def browse_output(self):
-		self.output_file = filedialog.asksaveasfilename(defaultextension='.mp4',
-		                                                filetypes=[('可解码音视频文件', encodable_file),
-		                                                           ('所有文件', '*.*')])
+		i = filedialog.asksaveasfilename(defaultextension='.mp4',
+		                                 filetypes=[('可解码音视频文件', encodable_file),
+		                                            ('所有文件', '*.*')])
+		if i != '':
+			self.output_file = i
 		self.output_entry.delete(0, tk.END)
 		self.output_entry.insert(0, self.output_file)
 	
