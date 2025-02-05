@@ -138,8 +138,8 @@ class VideoConverterApp:
 			filetypes=[('可解码音视频文件', decodable_file), ('所有文件', '*.*')])
 		if i != '':
 			self.input_file = i
-		self.input_entry.delete(0, tk.END)
-		self.input_entry.insert(0, self.input_file)
+			self.input_entry.delete(0, tk.END)
+			self.input_entry.insert(0, self.input_file)
 	
 	def browse_output(self):
 		i = filedialog.asksaveasfilename(defaultextension='.mp4',
@@ -147,8 +147,8 @@ class VideoConverterApp:
 		                                            ('所有文件', '*.*')])
 		if i != '':
 			self.output_file = i
-		self.output_entry.delete(0, tk.END)
-		self.output_entry.insert(0, self.output_file)
+			self.output_entry.delete(0, tk.END)
+			self.output_entry.insert(0, self.output_file)
 	
 	def toggle_resolution(self):
 		if self.resolution_var.get():
@@ -193,7 +193,7 @@ class VideoConverterApp:
 			self.audio_code_rate_entry.config(state='disabled')
 	
 	def convert_video(self):
-		if not self.input_file or not self.output_file:
+		if not self.input_entry.get() or not self.output_entry.get():
 			messagebox.showerror('错误', '请指定输入和输出文件！')
 			return
 		
