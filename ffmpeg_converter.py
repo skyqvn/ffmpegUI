@@ -66,36 +66,47 @@ class VideoConverterApp:
 		self.end_entry.pack(pady=5, anchor=tk.W)
 		self.end_entry.config(state='disabled')
 		
-		# 编码器选项
-		self.codec_var = tk.BooleanVar()
-		self.codec_check = tk.Checkbutton(self.root, text='编码器：', variable=self.codec_var,
-		                                  command=self.toggle_codec)
-		self.codec_check.pack(pady=5, anchor=tk.W)
-		self.codec_options = {
-			'（视频）H.264': 'libx264',
-			'（视频）H.265': 'libx265',
-			'（视频）MPEG-2': 'mpeg2video',
-			'（视频）MPEG-4': 'mpeg4',
-			'（视频）VP8': 'libvpx',
-			'（视频）VP9': 'libvpx-vp9',
-			'（视频）AV1': 'libaom-av1',
-			'（视频）ProRes': 'prores',
-			'（视频）DNxHD': 'dnxhd',
-
-			# '（音频）AAC': 'aac',
-			# '（音频）MP3': 'mp3',
-			# '（音频）WAV S16le': 'pcm_s16le',
-			# '（音频）WAV S24le': 'pcm_s24le',
-			# '（音频）FLAC': 'flac',
-			# '（音频）OGG Vorbis': 'libvorbis',
-			# '（音频）AC3': 'ac3',
-			# '（音频）Opus': 'libopus',
-			# '（音频）ALAC': 'alac'
+		# 视频编码器
+		self.video_codec_var = tk.BooleanVar()
+		self.video_codec_check = tk.Checkbutton(self.root, text='视频编码器：', variable=self.video_codec_var,
+		                                        command=self.toggle_video_codec)
+		self.video_codec_check.pack(pady=5, anchor=tk.W)
+		self.video_codec_options = {
+			'H.264': 'libx264',
+			'H.265': 'libx265',
+			'MPEG-2': 'mpeg2video',
+			'MPEG-4': 'mpeg4',
+			'VP8': 'libvpx',
+			'VP9': 'libvpx-vp9',
+			'AV1': 'libaom-av1',
+			'ProRes': 'prores',
+			'DNxHD': 'dnxhd'
 		}
-		self.codec_value = tk.StringVar(value='（视频）H.264')
-		self.codec_entry = tk.OptionMenu(root, self.codec_value, *self.codec_options.keys())
-		self.codec_entry.pack(pady=5)
-		self.codec_entry.config(state='disabled')
+		self.video_codec_value = tk.StringVar(value='H.264')
+		self.video_codec_entry = tk.OptionMenu(root, self.video_codec_value, *self.video_codec_options.keys())
+		self.video_codec_entry.pack(pady=5)
+		self.video_codec_entry.config(state='disabled')
+		
+		# 音频编码器
+		self.audio_codec_var = tk.BooleanVar()
+		self.audio_codec_check = tk.Checkbutton(self.root, text='音频编码器：', variable=self.audio_codec_var,
+		                                        command=self.toggle_audio_codec)
+		self.audio_codec_check.pack(pady=5, anchor=tk.W)
+		self.audio_codec_options = {
+			'AAC': 'aac',
+			'MP3': 'libmp3lame',
+			'WAV S16le': 'pcm_s16le',
+			'WAV S24le': 'pcm_s24le',
+			'FLAC': 'flac',
+			'OGG Vorbis': 'libvorbis',
+			'AC3': 'ac3',
+			'Opus': 'libopus',
+			'ALAC': 'alac'
+		}
+		self.audio_codec_value = tk.StringVar(value='AAC')
+		self.audio_codec_entry = tk.OptionMenu(root, self.audio_codec_value, *self.audio_codec_options.keys())
+		self.audio_codec_entry.pack(pady=5)
+		self.audio_codec_entry.config(state='disabled')
 		
 		# 帧率选项
 		self.fps_var = tk.BooleanVar()
@@ -168,11 +179,17 @@ class VideoConverterApp:
 		else:
 			self.end_entry.config(state='disabled')
 	
-	def toggle_codec(self):
-		if self.codec_var.get():
-			self.codec_entry.config(state='normal')
+	def toggle_video_codec(self):
+		if self.video_codec_var.get():
+			self.video_codec_entry.config(state='normal')
 		else:
-			self.codec_entry.config(state='disabled')
+			self.video_codec_entry.config(state='disabled')
+	
+	def toggle_audio_codec(self):
+		if self.audio_codec_var.get():
+			self.audio_codec_entry.config(state='normal')
+		else:
+			self.audio_codec_entry.config(state='disabled')
 	
 	def toggle_fps(self):
 		if self.fps_var.get():
@@ -193,7 +210,9 @@ class VideoConverterApp:
 			self.audio_code_rate_entry.config(state='disabled')
 	
 	def convert_video(self):
-		if not self.input_entry.get() or not self.output_entry.get():
+		self.input_file = self.input_entry.get()
+		self.output_file = self.output_entry.get()
+		if not self.input_file or not self.output_file:
 			messagebox.showerror('错误', '请指定输入和输出文件！')
 			return
 		
@@ -211,9 +230,13 @@ class VideoConverterApp:
 			resolution = self.resolution_value.get()
 			command += ['-vf', f'scale={self.resolution_options[resolution]}']
 		
-		if self.codec_var.get():
-			codec = self.codec_value.get()
-			command += ['-c:v', self.codec_options[codec]]
+		if self.video_codec_var.get():
+			video_codec = self.video_codec_value.get()
+			command += ['-c:v', self.video_codec_options[video_codec]]
+		
+		if self.audio_codec_var.get():
+			audio_codec = self.audio_codec_value.get()
+			command += ['-c:a', self.audio_codec_options[audio_codec]]
 		
 		if self.fps_var.get():
 			fps = self.fps_entry.get()
